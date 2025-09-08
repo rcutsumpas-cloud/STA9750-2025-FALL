@@ -1,0 +1,19 @@
+---
+title: STA9750 Project Portfolio
+---
+
+## Rachel Cutsumpas
+
+**About Me**
+I am a creative problem solver who is passionate about strategy, marketing, and storytelling through data and research. As a lifelong learner and ever-curious thinker, I am currently pursuing a Masters of Marketing with an analytics concentration at the Zicklin School of Business at CUNY Baruch. After studying communications at Ithaca College in undergrad, I started my professional career in audience strategy at a tech startup, specializing in programmatic campaigns. I've continued to grow my experience in audience and data strategy while working on a global automotive account at Publicis. My background and interest in the performing and visual arts allow me to bring creative and new approaches to marketing projects of all types. 
+
+*This site is a collection of projects for the course STA9750 - Software for Data Analysis.*
+
+[LinkedIn Profile](https://www.linkedin.com/in/rachel-cutsumpas/)
+
+```{r}
+#| include: false
+1+1
+```
+--------------
+Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
