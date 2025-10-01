@@ -22,5 +22,11 @@ I am a creative problem solver who is passionate about strategy, marketing, and 
 
 - [Mini-Project 01: Netflix Top 10 Analysis](mp01.html)
 
+---
+
+## Final Project 
+
+Coming Soon
+
 --------------
 Last Updated: `r format(Sys.time(), "%A %m %d, %Y at %H:%M%p")`
