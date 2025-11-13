@@ -12,7 +12,6 @@ data/**
 **/*csv*
 **/*xlsx*
 **/*zip
-**/*pdf
 **/*json
 **/*rds
 .DS_Store
@@ -24,3 +23,6 @@ data/**
 # Ignore raw Netflix data files
 data/mp01/*.tsv
 data/mp01/*.csv
+docs/mp03_files/
+docs/mp03_files/
+docs/mp03.html
