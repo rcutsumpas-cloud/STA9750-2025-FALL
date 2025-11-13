@@ -14,15 +14,41 @@ execute:
   cache: false  # Default: no caching for most chunks
 ---
 
+![](https://www.untappedcities.com/content/images/wp-content/uploads/2020/09/central-park-trees-grove-of-american-elms-central-park-mall-literary-walk-great-trees-nyc10.jpg)
+
 ## Introduction
 
-HOLD FOR INTRO TEXT
+This project examines the current tree species in New York City in order to make a data-informed suggestion for a new parks initiative.
+
+::: {.callout-note icon=false}
+## Project Description
+
+From the [STA 9750 Course Assignment Page](https://michael-weylandt.com/STA9750/miniprojects/mini03.html):
+
+> *"NYC’s many green spaces are beloved by the community, and represent a major ongoing investment by both city government and by a network of over 550 non-profit organizations and volunteer groups. With a budget of over $675,000,000 and over 5,000 full-time employees,1 the Department of Parks and Recreation (DPR) maintains over 30,000 acres of public parkland. DPR is also responsible for almost 900,000 trees, representing over 500 different species, across the city. In this mini-project, we will explore the NYC TreeMap data set, with an eye towards creating compelling visualizations of this beloved element of NYC’s urban fabric. Based on these visualizations, you will propose a new program for the NYC Parks Department that attempts to make the benefits of NYC trees available to all New Yorkers."*
+
+:::
+
+::: {.callout-important icon=false}
+## Report Structure
+
+**Project Set Up Part 1:** [Jump to Data Download - NYC City Council Districts →](#t1-data-download-nyc-city-council-districts)
+
+**Project Set Up Part 2:** [Jump to Data Download - Tree Points →](#t2-data-download-tree-points)
+
+**Data Integration:** [Jump to Mapping NYC Trees →](#t3-data-integration-and-initial-exploration)
+
+**Data Analysis:** [Jump to Mapping NYC Trees →](#t4-district-level-analysis-of-tree-coverage)
+
+**Final Deliverable:** [Jump to NYC Parks Proposal →](#t5-nyc-parks-proposal)
+
+:::
 
 ---
 
 ### T1: Data Download - NYC City Council Districts
 
-HOLD FOR INTRO TEXT
+This project utilizes data made available by the *NYC Department of Planning*. This dataset contains 51 districts with boundary information, allowing for geographic data analysis by district. 
 
 ```{r}
 #| label: setup
@@ -110,10 +136,6 @@ ggplot(nyc_districts) +
   labs(title = "NYC City Council Districts",
        subtitle = "Boundary simplification: dTolerance = 10 meters")
 ```
-
-EDIT TEXT
-
-The NYC City Council Districts data has been successfully downloaded and loaded. The dataset contains 51 districts with boundary information stored as MULTIPOLYGON geometries.
 
 ---
 
@@ -212,7 +234,7 @@ download_tree_points <- function() {
 nyc_trees <- download_tree_points()
 ```
 
-HOLD FOR TEXT
+In order to examine specific tree species, data is used from the *NYC Forestry Tree Points* dataset from NYC OpenData. 
 
 ---
 
@@ -220,8 +242,7 @@ HOLD FOR TEXT
 
 #### *Mapping NYC Trees*
 
-HOLD FOR INTRO TEXT - 
-Due to the density of tree points, a sample is shown for visualization clarity
+This visualization plots tree points using a simplified sample in order to enhance clarity and reduce visual density.
 
 ```{r}
 #| label: map-trees-sample
@@ -248,9 +269,7 @@ ggplot() +
 
 #### *Interactive Tree Map*
 
-HOLD FOR EDITED TEXT
-
-To better explore the spatial distribution of NYC's trees, I created an interactive map using the Leaflet package. The map uses marker clustering to handle the large dataset efficiently - at lower zoom levels, nearby trees are grouped into clusters, which split apart as you zoom in. Each tree is color-coded by condition (green = good, yellow = fair, orange = poor, red = dead), and clicking on individual trees reveals details about the species, condition, and location.
+This interactive map further explores the spatial distribution of NYC's trees. The visualization uses marker clustering to handle the large dataset efficiently. At lower zoom levels, nearby trees are grouped into clusters, which break apart as you zoom in. Each tree is color-coded by condition (green = good, yellow = fair, orange = poor, red = dead). Users can also clicking on individual trees to see additional details about the species, condition, and location.
 
 ```{r}
 #| label: prep-interactive-data
@@ -302,10 +321,6 @@ leaflet(trees_with_districts) |>
   ) |>
   setView(lng = -73.98, lat = 40.75, zoom = 11)
 ```
-
-HOLD FOR EDITED TEXT
-
-The map uses marker clustering to efficiently handle the large dataset - at lower zoom levels, nearby trees are grouped together, and clicking on a cluster zooms in to reveal individual trees.
 
 ---
 
@@ -369,7 +384,7 @@ top_borough <- case_when(
 **Council District `r top_district$CounDist`** has the most trees in NYC with **`r format(top_district$tree_count, big.mark = ",")`** trees. This district is located in **`r top_borough`**.
 :::
 
-The table below shows the top 10 council districts ranked by total tree count:
+The table below shows the Top 10 council districts by total tree count:
 ```{r}
 #| label: q1-table
 #| code-summary: "Show Table Code"
@@ -423,9 +438,7 @@ trees_per_district_with_borough |>
 #### **T4-Q2: Highest Tree Density**
 *Which council district has the highest density of trees (trees per area)?*
 
-HOLD FOR INTRO TEXT
-
-Tree density is calculated as the number of trees per square kilometer, accounting for the varying sizes of council districts.
+Tree density represents the number of trees per square kilometer, accounting for the variation in the size of council districts.
 ```{r}
 #| label: q2-tree-density
 #| code-summary: "Show Code"
@@ -472,7 +485,7 @@ HOLD FOR EDITED TEXT
 This district has `r format(top_density_district$tree_count, big.mark = ",")` trees across `r round(top_density_district$area_km2, 2)` square kilometers.
 :::
 
-The table below shows the top 10 council districts ranked by tree density:
+The table below shows the Top 10 council districts ranked by tree density:
 ```{r}
 #| label: q2-table
 #| code-summary: "Show Table Code"
@@ -499,19 +512,14 @@ tree_density |>
   row_spec(1, bold = TRUE, color = "white", background = "#28a745")
 ```
 
-
-HOLD FOR EDITED TEXT
-
-Tree density reveals different patterns than total tree count. Smaller, more compact districts in dense urban areas often achieve higher tree density than larger districts with more sprawling geography.
+Tree density reveals that smaller, more compact districts in dense urban areas often achieve higher tree density than larger districts with larger areas.
 
 ---
 
 #### **T4-Q3: Dead Trees by District**
 *Which District Has the Highest Fraction of Dead Trees?*
 
-EDIT INTRO TEXT
-
-Tree condition is an important indicator of tree health and maintenance needs. The `tpcondition` field classifies trees as Good, Fair, Poor, Dead, or other categories.
+Tree condition is an important indicator of tree health and influences maintenance needs. The `tpcondition` field classifies trees as Good, Fair, Poor, Dead, or other categories.
 ```{r}
 #| label: q3-dead-trees
 #| code-summary: "Show Code"
@@ -552,14 +560,12 @@ worst_district <- dead_tree_analysis |> slice(1)
 ::: {.callout-warning icon=false}
 ## Key Finding
 
-HOLD FOR EDITED TEXT
-
 **Council District `r worst_district$CounDist`** in **`r worst_district$Borough`** has the highest percentage of dead trees at **`r round(worst_district$pct_dead, 2)`%**.
 
 Out of `r format(worst_district$total_trees, big.mark = ",")` total trees, `r format(worst_district$dead_trees, big.mark = ",")` are classified as dead.
 :::
 
-The table below shows the top 10 council districts with the highest percentage of dead trees:
+The table below shows the Top 10 council districts with the highest percentage of dead trees:
 ```{r}
 #| label: q3-table
 #| code-summary: "Show Table Code"
@@ -619,18 +625,14 @@ dead_tree_analysis |>
   )
 ```
 
-HOLD FOR EDITED TEXT
-
-Districts with higher percentages of dead trees may require targeted intervention and replacement programs to maintain the urban canopy.
+Districts with higher levels of dead trees may require replacement programs to maintain their current urban canopy.
 
 ---
 
 #### **T4-Q4: Manhattan Tree Species**
 *What is the most common tree species in Manhattan?*
 
-HOLD FOR EDITED INTRO TEXT
-
-Manhattan's urban forest comprises a diverse array of tree species, each contributing to the borough's green canopy. Understanding which species dominate helps inform future planting decisions and maintenance priorities.
+Manhattan's contains a diverse array of tree species, all of which make up the borough's green canopy. Understanding which species are most common helps inform future planting and maintenance needs.
 ```{r}
 #| label: q4-manhattan-species
 #| code-summary: "Show Code"
@@ -679,7 +681,7 @@ top_species_pct <- (top_manhattan_species$count / total_manhattan_trees) * 100
 **`r top_manhattan_species$genusspecies`** is the most common tree species in Manhattan with **`r format(top_manhattan_species$count, big.mark = ",")`** trees, representing **`r round(top_species_pct, 1)`%** of all Manhattan trees.
 :::
 
-The table below shows the top 15 most common tree species in Manhattan:
+The table below shows the Top 15 most common tree species in Manhattan:
 ```{r}
 #| label: q4-table
 #| code-summary: "Show Table Code"
@@ -707,11 +709,7 @@ manhattan_species |>
   row_spec(1, bold = TRUE, color = "white", background = "#28a745")
 ```
 
-HOLD FOR EDITED TEXT
-
-The dominance of `r top_manhattan_species$genusspecies` reflects Manhattan's urban forestry strategy, which likely prioritizes species that thrive in dense urban environments with limited soil space, high pollution levels, and the urban heat island effect. This species' resilience makes it an ideal candidate for continued planting in dense urban areas throughout the city.
-
-
+The high prevalence of Honeylocust trees in Manhattan reflects a strategy that prioritizes species that thrive in dense urban areas. These environments have limited soil space and high pollution levels. This species' resilience makes it an ideal candidate for continued planting in dense urban areas throughout the city.
 ```{r}
 #| label: q4-pie-chart
 #| code-summary: "Show Plot Code"
@@ -758,15 +756,12 @@ ggplot(manhattan_pie_data, aes(x = "", y = count, fill = category)) +
     legend.title = element_text(face = "bold")
   )
 ```
-
 ---
 
 #### **T4-Q5: Trees Near Baruch College**
 *What is the species of the tree closest to Baruch's campus?*
 
-HOLD FOR EDITED INTRO TEXT
-
-Baruch College is located at 55 Lexington Avenue in Manhattan. Using spatial distance calculations, we can identify the nearest street tree to campus.
+Baruch College is located at 55 Lexington Avenue in Manhattan. Spatial distance calculations can be used to identify the nearest street tree to campus.
 ```{r}
 #| label: q5-closest-tree
 #| code-summary: "Show Code"
@@ -803,20 +798,15 @@ closest_tree <- trees_with_distance |>
 ::: {.callout-note icon=false}
 ## Key Finding
 
-HOLD FOR EDITED TEXT
-
 The tree closest to Baruch College is a **`r closest_tree$genusspecies`**.
 
-**Details:**
-- **Distance**: `r round(as.numeric(closest_tree$distance_to_baruch), 1)` meters (`r round(as.numeric(closest_tree$distance_to_baruch) * 3.28084, 1)` feet)
-- **Condition**: `r closest_tree$tpcondition`
-- **Location**: District `r closest_tree$CounDist` (`r closest_tree$Borough`)
-- **Coordinates**: `r round(st_coordinates(closest_tree)[2], 5)`°N, `r round(abs(st_coordinates(closest_tree)[1]), 5)`°W
+**Distance**: `r round(as.numeric(closest_tree$distance_to_baruch), 1)` meters (`r round(as.numeric(closest_tree$distance_to_baruch) * 3.28084, 1)` feet)
+**Condition**: `r closest_tree$tpcondition`
+**Location**: District `r closest_tree$CounDist` (`r closest_tree$Borough`)
+**Coordinates**: `r round(st_coordinates(closest_tree)[2], 5)`°N, `r round(abs(st_coordinates(closest_tree)[1]), 5)`°W
 :::
 
-HOLD FOR EDITED TEXT
-
-The table below shows the 10 closest trees to Baruch College:
+The table below shows the 10 tree species closest to Baruch College:
 ```{r}
 #| label: q5-table
 #| code-summary: "Show Table Code"
@@ -908,9 +898,898 @@ ggplot() +
   theme_minimal()
 ```
 
-HOLD FOR EDITED TEXT
+The closest tree is less than `r round(as.numeric(closest_tree$distance_to_baruch), 0)` meters from campus. Trees add both functional and aesthetic value to a neighborhood, providing shade and visual appeal to students and faculty who pass by.
 
-The closest tree is less than `r round(as.numeric(closest_tree$distance_to_baruch), 0)` meters from campus, likely providing shade and aesthetic value to students and faculty passing by daily.
+---
+
+### T5: NYC Parks Proposal
+
+To integrate these data findings into a real-world application, they are used to design a hypothetical program for the NYC Parks Department. The below analyses summarize additional data explorations, followed by a full program description.
+
+#### *Figure 1 - Dead Trees By Borough*
+
+```{r}
+#| label: borough-dead-tree-analysis
+#| code-summary: "Show Analysis Code"
+
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+
+# Calculate dead tree statistics by borough (exclude Unknown)
+borough_dead_trees <- trees_with_districts |>
+  st_drop_geometry() |>
+  filter(Borough != "Unknown") |>  # REMOVE UNKNOWN
+  group_by(Borough) |>
+  summarise(
+    total_trees = n(),
+    dead_trees = sum(tpcondition == "Dead", na.rm = TRUE),
+    good_trees = sum(tpcondition == "Good", na.rm = TRUE),
+    fair_trees = sum(tpcondition == "Fair", na.rm = TRUE),
+    poor_trees = sum(tpcondition == "Poor", na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(
+    pct_dead = (dead_trees / total_trees) * 100,
+    pct_good = (good_trees / total_trees) * 100,
+    pct_fair = (fair_trees / total_trees) * 100,
+    pct_poor = (poor_trees / total_trees) * 100
+  ) |>
+  arrange(desc(pct_dead))
+```
+
+```{r}
+#| label: borough-comparison-table
+#| code-summary: "Show Table Code"
+
+borough_dead_trees |>
+  mutate(
+    total_trees_formatted = format(total_trees, big.mark = ","),
+    dead_trees_formatted = format(dead_trees, big.mark = ","),
+    pct_dead_formatted = paste0(round(pct_dead, 2), "%"),
+    pct_good_formatted = paste0(round(pct_good, 1), "%")
+  ) |>
+  select(Borough, total_trees_formatted, dead_trees_formatted, 
+         pct_dead_formatted, pct_good_formatted) |>
+  kable(
+    col.names = c("Borough", "Total Trees", "Dead Trees", "% Dead", "% Good"),
+    align = c("l", "r", "r", "r", "r"),
+    caption = "Tree Condition by NYC Borough"
+  ) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    position = "left"
+  ) |>
+  row_spec(1, bold = TRUE, color = "white", background = "#dc3545")
+```
+
+```{r}
+#| label: borough-condition-stacked
+#| code-summary: "Show Plot Code"
+#| fig.width: 10
+#| fig.height: 6
+#| fig.cap: "Tree Condition Distribution by Borough"
+
+library(tidyr)
+
+# Reshape data for stacked chart
+borough_condition_long <- borough_dead_trees |>
+  select(Borough, pct_good, pct_fair, pct_poor, pct_dead) |>
+  pivot_longer(
+    cols = starts_with("pct_"),
+    names_to = "condition",
+    values_to = "percentage"
+  ) |>
+  mutate(
+    condition = factor(condition,
+                      levels = c("pct_dead", "pct_poor", "pct_fair", "pct_good"),
+                      labels = c("Dead", "Poor", "Fair", "Good"))
+  )
+
+ggplot(borough_condition_long, 
+       aes(x = reorder(Borough, percentage, function(x) sum(x[condition == "Dead"])), 
+           y = percentage, 
+           fill = condition)) +
+  geom_col(position = "stack") +
+  scale_fill_manual(
+    values = c("Dead" = "#C62828", "Poor" = "#F57C00", 
+               "Fair" = "#FBC02D", "Good" = "#2E7D32"),
+    name = "Condition"
+  ) +
+  geom_text(aes(label = ifelse(percentage > 5, 
+                               paste0(round(percentage, 0), "%"), "")),
+            position = position_stack(vjust = 0.5),
+            color = "white",
+            fontface = "bold",
+            size = 3) +
+  labs(
+    title = "Tree Condition Distribution Across NYC Boroughs",
+    subtitle = "Breakdown of tree health by borough",
+    x = NULL,
+    y = "Percentage of Trees (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    panel.grid.major.x = element_blank(),
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.x = element_text(size = 11)
+  )
+```
+
+---
+
+#### *Figure 2 - Tree Species in Queens*
+```{r}
+#| label: queens-species-setup
+#| code-summary: "Show Analysis Code"
+#| output: false
+
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+
+# Calculate total Queens trees and create species list
+queens_species <- trees_with_districts |>
+  st_drop_geometry() |>
+  filter(Borough == "Queens") |>
+  group_by(genusspecies) |>
+  summarise(count = n(), .groups = "drop") |>
+  arrange(desc(count))
+
+total_queens_trees <- sum(queens_species$count)
+
+# Define problematic species
+high_isoprene_species <- c("pin oak", "red oak", "white oak", "willow oak", 
+                           "sweetgum", "black oak", "northern red oak")
+
+# Analyze Queens trees by isoprene category
+queens_species_categorized <- trees_with_districts |>
+  st_drop_geometry() |>
+  filter(Borough == "Queens") |>
+  mutate(
+    species_lower = tolower(genusspecies),
+    is_high_isoprene = str_detect(species_lower, 
+                                   paste(high_isoprene_species, collapse = "|"))
+  )
+
+# Top high-isoprene species in Queens
+high_isoprene_queens <- queens_species_categorized |>
+  filter(is_high_isoprene) |>
+  group_by(genusspecies) |>
+  summarise(count = n(), .groups = "drop") |>
+  mutate(percentage = (count / total_queens_trees) * 100) |>
+  arrange(desc(count))
+
+# Store summary values for inline text
+total_high_isoprene <- sum(high_isoprene_queens$count)
+pct_high_isoprene <- round(total_high_isoprene / total_queens_trees * 100, 2)
+```
+
+**High-Isoprene Trees in Queens**
+
+Queens contains **`r format(total_high_isoprene, big.mark = ",")`** high-isoprene trees, representing **`r pct_high_isoprene`%** of the borough's total tree canopy. These species—primarily oaks and sweetgums—give off organic compounds (isoprenes) that interact with vehicle emissions and form ground-level ozone, which can exacerbate respiratory conditions.
+
+**Top High-Isoprene Species:**
+
+1. **Pin Oak** (*Quercus palustris*): `r format(high_isoprene_queens$count[1], big.mark = ",")` trees (`r round(high_isoprene_queens$percentage[1], 2)`%)
+2. **Northern Red Oak** (*Quercus rubra*): `r format(high_isoprene_queens$count[2], big.mark = ",")` trees (`r round(high_isoprene_queens$percentage[2], 2)`%)
+3. **Sweetgum** (*Liquidambar styraciflua*): `r format(high_isoprene_queens$count[3], big.mark = ",")` trees (`r round(high_isoprene_queens$percentage[3], 2)`%)
+4. **Swamp White Oak** (*Quercus bicolor*): `r format(high_isoprene_queens$count[4], big.mark = ",")` trees (`r round(high_isoprene_queens$percentage[4], 2)`%)
+5. **Willow Oak** (*Quercus phellos*): `r format(high_isoprene_queens$count[5], big.mark = ",")` trees (`r round(high_isoprene_queens$percentage[5], 2)`%)
+
+These five species alone account for **`r format(sum(high_isoprene_queens$count[1:5]), big.mark = ",")`** high-isoprene trees, representing immediate opportunities for strategic replacement with low-allergen, low-isoprene alternatives such as Ginkgo, Honey Locust, and Callery Pear.
+
+```{r}
+#| label: queens-problematic-species-table
+#| code-summary: "Show Table Code"
+
+high_isoprene_queens |>
+  slice_head(n = 10) |>
+  mutate(
+    Rank = row_number(),
+    count_formatted = format(count, big.mark = ","),
+    pct_formatted = paste0(round(percentage, 2), "%")
+  ) |>
+  select(Rank, genusspecies, count_formatted, pct_formatted) |>
+  kable(
+    col.names = c("Rank", "Tree Species", "Count", "% of Queens Trees"),
+    align = c("c", "l", "r", "r"),
+    caption = "High-Isoprene Species in Queens (Replacement Priorities)"
+  ) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    position = "left"
+  ) |>
+  row_spec(0, background = "#dc3545", color = "white", bold = TRUE)
+```
+
+```{r}
+#| label: queens-species-table
+#| code-summary: "Show Table Code"
+
+queens_species |>
+  slice_head(n = 15) |>
+  mutate(
+    Rank = row_number(),
+    count_formatted = format(count, big.mark = ","),
+    percentage = (count / total_queens_trees) * 100,
+    pct_formatted = paste0(round(percentage, 2), "%"),
+    # Flag if high-isoprene
+    species_lower = tolower(genusspecies),
+    is_problematic = str_detect(species_lower, 
+                                paste(high_isoprene_species, collapse = "|"))
+  ) |>
+  select(Rank, genusspecies, count_formatted, pct_formatted, is_problematic) |>
+  kable(
+    col.names = c("Rank", "Tree Species", "Count", "% of Total", "High-Isoprene?"),
+    align = c("c", "l", "r", "r", "c"),
+    caption = "Top 15 Most Common Tree Species in Queens"
+  ) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    position = "left"
+  ) |>
+  row_spec(1, bold = TRUE, color = "white", background = "#28a745") |>
+  column_spec(5, bold = TRUE)
+```
+
+
+```{r}
+#| label: queens-species-bar-chart
+#| code-summary: "Show Plot Code"
+#| fig.width: 10
+#| fig.height: 7
+#| fig.cap: "Top 15 Most Common Tree Species in Queens"
+
+# Add category for visualization
+queens_top15_with_category <- queens_species |>
+  slice_head(n = 15) |>
+  mutate(
+    percentage = (count / total_queens_trees) * 100,
+    species_label = str_trunc(genusspecies, width = 35),
+    species_lower = tolower(genusspecies),
+    is_problematic = str_detect(species_lower, 
+                                paste(high_isoprene_species, collapse = "|")),
+    category = if_else(is_problematic, "High-Isoprene", "Other")
+  )
+
+ggplot(queens_top15_with_category, 
+       aes(x = reorder(species_label, count), y = count, fill = category)) +
+  geom_col(alpha = 0.8) +
+  scale_fill_manual(
+    values = c("High-Isoprene" = "#dc3545", "Other" = "#2E86AB"),
+    name = "Category"
+  ) +
+  geom_text(aes(label = format(count, big.mark = ",")), 
+            hjust = -0.1, size = 3) +
+  coord_flip() +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.15)),
+    labels = scales::comma
+  ) +
+  labs(
+    title = "Most Common Tree Species in Queens",
+    subtitle = paste0("Top 15 species out of ", 
+                     format(total_queens_trees, big.mark = ","), 
+                     " total trees (High-isoprene species highlighted in red)"),
+    x = NULL,
+    y = "Number of Trees"
+  ) +
+  theme_minimal() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10, color = "gray40"),
+    legend.position = "top"
+  )
+```
+
+---
+
+#### *Figure 3 - District 30, Queens Analysis*
+
+District 30 was identified as the best option to begin the proposed tree replacement program. District 30 in Queens includes Astoria, Corona, East Elmhurst, Jackson Heights, Long Island City, Sunnyside, and Woodside. 
+
+While District 32 has the highest rate of dead trees in NYC, it's location near the coastline in Queens makes it a less tree-dense environment to begin with. By focus on District 30 to start the launch of the proposed tree replacement program, there will be a greater impact and better strategic fit.
+
+#### *District 30 Spatial Analysis*
+
+District 30 in Queens presents a significant opportunity for strategic tree species replacement. 
+
+```{r}
+#| label: district30-tab-styles
+#| echo: false
+#| output: asis
+
+cat('
+<style>
+.tree-tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  margin-bottom: 10px;
+}
+
+.tree-tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 20px;
+  transition: 0.3s;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tree-tab button:hover {
+  background-color: #ddd;
+}
+
+.tree-tab button.active {
+  background-color: #2E86AB;
+  color: white;
+}
+
+.tree-tabcontent {
+  display: none;
+  padding: 20px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+  background-color: white;
+}
+</style>
+')
+```
+```{r}
+#| label: district30-tab-buttons
+#| echo: false
+#| output: asis
+
+cat('
+<div class="tree-tab">
+  <button class="tree-tablinks" onclick="openTreeTab(event, \'Health\')" id="defaultTreeTab">
+    Health Status
+  </button>
+  <button class="tree-tablinks" onclick="openTreeTab(event, \'Species\')">
+    Species Impact
+  </button>
+  <button class="tree-tablinks" onclick="openTreeTab(event, \'Priority\')">
+    Priority Targets
+  </button>
+</div>
+')
+```
+```{r}
+#| label: district30-data-setup
+#| echo: false
+#| output: false
+
+library(sf)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+
+# Filter for District 30
+district30_boundary <- nyc_districts |>
+  filter(CounDist == 30)
+
+district30_trees <- trees_with_districts |>
+  filter(CounDist == 30)
+
+# Define species categories
+high_isoprene_species <- c("pin oak", "red oak", "white oak", "willow oak", 
+                           "sweetgum", "black oak", "northern red oak")
+beneficial_species <- c("ginkgo", "honey locust", "callery pear")
+
+# Categorize trees
+district30_categorized <- district30_trees |>
+  mutate(
+    species_lower = tolower(genusspecies),
+    health_status = case_when(
+      tpcondition == "Dead" ~ "Dead",
+      tpcondition %in% c("Good", "Fair", "Poor") ~ "Alive",
+      TRUE ~ "Unknown"
+    ),
+    species_category = case_when(
+      str_detect(species_lower, paste(beneficial_species, collapse = "|")) ~ "High-Benefit (Low-Isoprene)",
+      str_detect(species_lower, paste(high_isoprene_species, collapse = "|")) ~ "High-Isoprene (Problematic)",
+      TRUE ~ "Other Species"
+    )
+  )
+```
+```{r}
+#| label: district30-health-tab-open
+#| echo: false
+#| output: asis
+
+cat('<div id="Health" class="tree-tabcontent">')
+cat('<h4>Tree Health Status in District 30</h4>')
+cat('<p>Dead trees (red) represent immediate replacement opportunities. All dead trees are shown, along with a 25% sample of alive trees for readability.</p>')
+```
+```{r}
+#| label: district30-health-map
+#| fig.width: 10
+#| fig.height: 8
+#| echo: false
+
+# Sample for readability - FIX: Use mutate first, then sample differently
+set.seed(123)
+
+# Separate dead and alive trees first
+dead_trees <- district30_categorized |> filter(health_status == "Dead")
+alive_trees <- district30_categorized |> filter(health_status == "Alive")
+
+# Sample alive trees only
+alive_sample <- alive_trees |> slice_sample(prop = 0.25)
+
+# Combine back together
+health_sample <- bind_rows(dead_trees, alive_sample)
+
+ggplot() +
+  geom_sf(data = district30_boundary, fill = "gray98", color = "black", linewidth = 1.5) +
+  geom_sf(data = health_sample |> filter(health_status == "Alive"),
+          color = "#2E7D32", size = 1.5, alpha = 0.5) +
+  geom_sf(data = health_sample |> filter(health_status == "Dead"),
+          color = "#C62828", size = 2.5, alpha = 0.95) +
+  labs(
+    title = "District 30: Tree Health Status",
+    subtitle = paste0(
+      format(sum(district30_categorized$health_status == "Dead"), big.mark = ","),
+      " dead trees in need of replacement"
+    )
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10, color = "gray40"),
+    plot.background = element_rect(fill = "white", color = NA)
+  )
+```
+```{r}
+#| label: district30-health-stats
+#| echo: false
+#| output: asis
+
+dead_count <- sum(district30_categorized$health_status == "Dead")
+alive_count <- sum(district30_categorized$health_status == "Alive")
+pct_dead <- round(dead_count / (dead_count + alive_count) * 100, 2)
+
+cat(paste0(
+  '<p><strong>Summary:</strong> ',
+  format(dead_count, big.mark = ","), ' dead trees (',
+  pct_dead, '%) out of ',
+  format(dead_count + alive_count, big.mark = ","), ' total trees.</p>'
+))
+```
+```{r}
+#| label: district30-health-tab-close
+#| echo: false
+#| output: asis
+
+cat('</div>')
+```
+```{r}
+#| label: district30-species-tab-open
+#| echo: false
+#| output: asis
+
+cat('<div id="Species" class="tree-tabcontent">')
+cat('<h4>Species Health Impact in District 30</h4>')
+cat('<p>Red dots show high-isoprene species that contribute to ozone formation. Green dots show beneficial low-allergen species. Gray shows other species (15% sample for readability).</p>')
+```
+```{r}
+#| label: district30-species-map
+#| fig.width: 10
+#| fig.height: 8
+#| echo: false
+
+# Sample for readability - FIX: Separate before sampling
+set.seed(123)
+
+# Separate priority and other species
+priority_species <- district30_categorized |> 
+  filter(species_category %in% c("High-Isoprene (Problematic)", "High-Benefit (Low-Isoprene)"))
+
+other_species <- district30_categorized |> 
+  filter(species_category == "Other Species")
+
+# Sample other species only
+other_sample <- other_species |> slice_sample(prop = 0.15)
+
+# Combine
+species_sample <- bind_rows(priority_species, other_sample)
+
+ggplot() +
+  geom_sf(data = district30_boundary, fill = "gray98", color = "black", linewidth = 1.5) +
+  geom_sf(data = species_sample |> filter(species_category == "Other Species"),
+          color = "#BDBDBD", size = 1, alpha = 0.3) +
+  geom_sf(data = species_sample |> filter(species_category == "High-Isoprene (Problematic)"),
+          color = "#C62828", size = 2, alpha = 0.85) +
+  geom_sf(data = species_sample |> filter(species_category == "High-Benefit (Low-Isoprene)"),
+          color = "#2E7D32", size = 2.5, alpha = 0.95) +
+  labs(
+    title = "District 30: Species Health Impact",
+    subtitle = "High-isoprene species (red) vs. Beneficial species (green)"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10, color = "gray40"),
+    plot.background = element_rect(fill = "white", color = NA)
+  )
+```
+```{r}
+#| label: district30-species-stats
+#| echo: false
+#| output: asis
+
+high_iso_count <- sum(district30_categorized$species_category == "High-Isoprene (Problematic)")
+beneficial_count <- sum(district30_categorized$species_category == "High-Benefit (Low-Isoprene)")
+pct_high_iso <- round(high_iso_count / nrow(district30_categorized) * 100, 2)
+pct_beneficial <- round(beneficial_count / nrow(district30_categorized) * 100, 2)
+
+cat(paste0(
+  '<p><strong>Summary:</strong> ',
+  format(high_iso_count, big.mark = ","), ' high-isoprene trees (',
+  pct_high_iso, '%) | ',
+  format(beneficial_count, big.mark = ","), ' beneficial species (',
+  pct_beneficial, '%)</p>'
+))
+```
+```{r}
+#| label: district30-species-tab-close
+#| echo: false
+#| output: asis
+
+cat('</div>')
+```
+```{r}
+#| label: district30-priority-tab-open
+#| echo: false
+#| output: asis
+
+cat('<div id="Priority" class="tree-tabcontent">')
+cat('<h4>Priority Replacement Targets in District 30</h4>')
+cat('<p>This map highlights trees with the highest replacement priority: dead trees (dark red) and poor-condition high-isoprene trees (orange).</p>')
+```
+```{r}
+#| label: district30-priority-map
+#| fig.width: 10
+#| fig.height: 8
+#| echo: false
+
+priority_trees <- district30_categorized |>
+  filter(health_status == "Dead" | 
+         (species_category == "High-Isoprene (Problematic)" & tpcondition == "Poor"))
+
+# Sample background trees for readability
+set.seed(123)
+background_sample <- district30_categorized |>
+  filter(!(health_status == "Dead" | 
+          (species_category == "High-Isoprene (Problematic)" & tpcondition == "Poor"))) |>
+  slice_sample(prop = 0.1)
+
+ggplot() +
+  geom_sf(data = district30_boundary, fill = "gray98", color = "black", linewidth = 1.5) +
+  geom_sf(data = background_sample,
+          color = "lightgray", size = 0.5, alpha = 0.2) +
+  geom_sf(data = priority_trees |> filter(health_status != "Dead"),
+          color = "#F57C00", size = 2, alpha = 0.85) +
+  geom_sf(data = priority_trees |> filter(health_status == "Dead"),
+          color = "#C62828", size = 2.5, alpha = 0.9) +
+  labs(
+    title = "District 30: Priority Replacement Targets",
+    subtitle = paste0(
+      format(nrow(priority_trees), big.mark = ","),
+      " trees prioritized for replacement"
+    )
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 10, color = "gray40"),
+    plot.background = element_rect(fill = "white", color = NA)
+  )
+```
+```{r}
+#| label: district30-priority-stats
+#| echo: false
+#| output: asis
+
+priority_dead <- sum(priority_trees$health_status == "Dead")
+priority_poor <- nrow(priority_trees) - priority_dead
+
+cat(paste0(
+  '<p><strong>Priority Breakdown:</strong> ',
+  format(priority_dead, big.mark = ","), ' dead trees (immediate) + ',
+  format(priority_poor, big.mark = ","), ' poor-condition high-isoprene trees = ',
+  format(nrow(priority_trees), big.mark = ","), ' total priority replacements.</p>'
+))
+```
+```{r}
+#| label: district30-priority-tab-close
+#| echo: false
+#| output: asis
+
+cat('</div>')
+```
+```{r}
+#| label: district30-tab-javascript
+#| echo: false
+#| output: asis
+
+cat('
+<script>
+function openTreeTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  
+  // Hide all tab content
+  tabcontent = document.getElementsByClassName("tree-tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  
+  // Remove active class from all buttons
+  tablinks = document.getElementsByClassName("tree-tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  
+  // Show current tab and mark button as active
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Open first tab by default when page loads
+document.getElementById("defaultTreeTab").click();
+</script>
+')
+```
+
+#### *Implementation Strategy for District 30*
+
+```{r}
+#| label: district30-summary-stats
+#| echo: false
+
+# Calculate overall statistics
+district30_stats <- district30_categorized |>
+  st_drop_geometry() |>
+  summarise(
+    total_trees = n(),
+    dead_trees = sum(health_status == "Dead"),
+    pct_dead = round(dead_trees / total_trees * 100, 2),
+    high_isoprene = sum(species_category == "High-Isoprene (Problematic)"),
+    pct_high_isoprene = round(high_isoprene / total_trees * 100, 2),
+    high_benefit = sum(species_category == "High-Benefit (Low-Isoprene)"),
+    pct_high_benefit = round(high_benefit / total_trees * 100, 2),
+    priority_replacements = sum(health_status == "Dead" | 
+                               (species_category == "High-Isoprene (Problematic)" & tpcondition == "Poor"))
+  )
+```
+
+::: {.callout-note icon=true}
+## District 30 Tree Replacement Opportunity
+
+**Total Trees**: `r format(district30_stats$total_trees, big.mark = ",")`
+
+**Replacement Priorities:**
+
+- **Immediate (Dead)**: `r format(district30_stats$dead_trees, big.mark = ",")` trees (`r district30_stats$pct_dead`%)
+- **High-Isoprene Species**: `r format(district30_stats$high_isoprene, big.mark = ",")` trees (`r district30_stats$pct_high_isoprene`%)
+- **Current Beneficial Species**: `r format(district30_stats$high_benefit, big.mark = ",")` trees (`r district30_stats$pct_high_benefit`%)
+- **Total Priority Replacements**: `r format(district30_stats$priority_replacements, big.mark = ",")` trees
+
+By replacing these `r format(district30_stats$priority_replacements, big.mark = ",")` priority trees with low-allergen, low-isoprene species (Ginkgo, Honey Locust, Callery Pear), District 30 can:
+
+1. Eliminate immediate hazards by replacing dead trees
+2. Reduce ozone formation by removing high-isoprene emitters
+3. Decrease allergen burden by introducing low-allergen species
+4. Improve long-term respiratory health outcomes for residents
+:::
+
+---
+
+## **Project Proposal**
+### *Increasing Health Outcomes Through Strategic Tree Replacement*
+
+```{r}
+#| label: policy-brief-setup
+#| echo: false
+#| output: false
+
+# Calculate key statistics for the brief
+district30_summary <- district30_categorized |>
+  st_drop_geometry() |>
+  summarise(
+    total = n(),
+    dead = sum(health_status == "Dead"),
+    pct_dead = round(dead/total*100, 1),
+    high_iso = sum(species_category == "High-Isoprene (Problematic)"),
+    pct_iso = round(high_iso/total*100, 1),
+    beneficial = sum(species_category == "High-Benefit (Low-Isoprene)"),
+    pct_beneficial = round(beneficial/total*100, 1)
+  )
+
+# Calculate costs and ROI
+replacement_cost <- district30_summary$dead * 800
+ecosystem_services <- replacement_cost * 5.80
+annual_ed_savings <- 75 * 2000  # 75 avoided ED visits at $2000 each
+ten_year_roi <- round(((ecosystem_services * 10) + (annual_ed_savings * 10)) / replacement_cost, 1)
+```
+
+::: {.callout-important icon=false}
+## Executive Summary
+
+**Prepared for:** NYC City Council, NYC Parks Department  
+**Issue:** Dead tree replacement presents opportunity to reduce asthma burden and ozone formation in Queens  
+**Proposal:** Replace `r format(district30_summary$dead, big.mark = ",")` dead trees with low-allergen, low-isoprene species
+**Location:** District 30, Queens (Astoria, Corona, East Elmhurst, Jackson Heights, Long Island City, Sunnyside, Woodside)
+:::
+
+**The Problem**
+
+District 30 contains **`r format(district30_summary$dead, big.mark = ",")`** dead trees (**`r district30_summary$pct_dead`%** of total tree canopy). Without replacement, these trees provide no value or benefits to the neighborhood, and can even pose safety or pest risks. Additionally, **`r district30_summary$pct_iso`%** of the district's trees are high-isoprene species (oaks, sweetgums) that contribute to respiratory health concerns like asthma.
+
+At the borough level, Queens experiences an asthma hospitalization rate of 11.5% ([NYC Gov](https://a816-dohbesp.nyc.gov/IndicatorPublic/data-explorer/asthma/?id=2414#display=summary)). High-isoprene urban trees can exacerbate respiratory conditions.
+
+
+**The Solution**
+
+Replace dead trees in District 30 with low-allergen, low-isoprene species.  These health-positive trees will improve air quality and reduce respiratory burdens.
+```{r}
+#| label: species-table-brief
+#| echo: false
+
+species_recommendations <- data.frame(
+  Species = c("Ginkgo (Ginkgo biloba)", 
+              "Honey Locust (Gleditsia triacanthos)", 
+              "Callery Pear (Pyrus calleryana)"),
+  Isoprene = c("Near-zero", "Low", "Low"),
+  Allergenicity = c("Very low", "Low", "Low"),
+  Urban_Tolerance = c("Excellent", "Excellent", "Very good"),
+  Proposed_Mix = c("40%", "35%", "25%")
+)
+
+kable(species_recommendations,
+      col.names = c("Species", "Isoprene Emission", "Allergenicity", 
+                    "Urban Tolerance", "Proposed Mix"),
+      align = c("l", "c", "c", "c", "c")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 11
+  ) |>
+  row_spec(0, bold = TRUE, background = "#2E86AB", color = "white")
+```
+
+These species were chosen based on various key criteria. All of these species are approved by the NYC Parks system, with known success growing in urban environments. These species are also climate-resistant, able to stand up to heigh heat or dought-like conditions. In addition, they are low maintenance and have minimal allergen production.
+
+**Why This Works**
+
+::: {.columns}
+::: {.column width="48%"}
+**Political Feasibility**
+
+- No controversial removals  
+- Cost-neutral implementation  
+- Leverages existing workflows  
+- Community co-benefits
+:::
+
+::: {.column width="48%"}
+**Health Impact**
+
+- Reduced ozone formation  
+- Lower allergen burden  
+- Fewer asthma episodes  
+- Improved quality of life
+:::
+:::
+
+**Implementation Timeline**
+```{r}
+#| label: implementation-phases-brief
+#| echo: false
+
+phases <- data.frame(
+  Phase = c("Phase 1", "Phase 2", "Phase 3"),
+  Timeline = c("Months 1-18", "Years 2-3", "Years 3-5"),
+  Action = c(
+    paste0("Replace all ", format(district30_summary$dead, big.mark = ","), " dead trees"),
+    "Replace poor-condition high-isoprene trees (routine maintenance)",
+    "Opportunistic replacement as high-isoprene trees naturally decline"
+  ),
+  Target = c(
+    paste0(format(district30_summary$dead, big.mark = ","), " trees"),
+    "~500 trees",
+    "~300 trees/year"
+  )
+)
+
+kable(phases,
+      col.names = c("Phase", "Timeline", "Action", "Target")) |>
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width = FALSE,
+    font_size = 10
+  ) |>
+  row_spec(1, bold = TRUE, background = "#FFF3CD") |>
+  column_spec(1, bold = TRUE)
+```
+
+```{r}
+#| label: policy-brief-map
+#| fig.width: 8
+#| fig.height: 6
+#| fig.cap: "District 30: Dead Trees Requiring Immediate Replacement"
+#| echo: false
+
+dead_trees_brief <- district30_categorized |> filter(health_status == "Dead")
+
+ggplot() +
+  geom_sf(data = district30_boundary, fill = "gray95", color = "black", linewidth = 1.5) +
+  geom_sf(data = dead_trees_brief,
+          color = "#C62828", size = 2.5, alpha = 0.85) +
+  labs(
+    title = "Dead Tree Locations in District 30",
+    subtitle = paste0(
+      format(nrow(dead_trees_brief), big.mark = ","),
+      " trees distributed throughout the district"
+    ),
+    caption = "Red dots indicate dead trees requiring immediate replacement"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(face = "bold", size = 13, hjust = 0.5),
+    plot.subtitle = element_text(size = 10, hjust = 0.5, color = "gray40"),
+    plot.caption = element_text(size = 9, hjust = 0.5, color = "gray50"),
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+```
+
+Dead trees are distributed throughout District 30, allowing for **equitable implementation** across neighborhoods with **no single community bearing the entire burden**.
+
+
+**The Bottom Line**
+
+Dead trees require replacement, regardless of their species or community impact. By strategically selecting low-allergen, low-isoprene species, what was once routine maintenance can be transformed into a public health intervention at no additional cost. Through implementing this strategic replacement program, District 30 residents will benefit from cleaner air, and reduced respiratory burden, with a strong return on investment over time.
+
+```{r}
+#| label: data-sources-brief
+#| echo: false
+#| output: false
+
+cat("**Primary Data:**\n")
+cat("- NYC Street Tree Census (2015), NYC Parks Department\n")
+cat("- NYC Council District Boundaries, NYC Planning\n")
+cat("- Tree health condition assessed by certified arborists\n\n")
+
+cat("**Health Data:**\n")
+cat("- NY State Department of Health Asthma Study (2018-2019)\n")
+cat("- NYC Environment & Health Data Portal\n")
+cat("- Columbia University Air Quality Research\n\n")
+
+cat("**Analysis:**\n")
+cat(paste0("- Total District 30 trees analyzed: ", format(district30_summary$total, big.mark = ","), "\n"))
+cat(paste0("- Dead trees identified: ", format(district30_summary$dead, big.mark = ","), 
+           " (", district30_summary$pct_dead, "%)\n"))
+cat(paste0("- High-isoprene species: ", format(district30_summary$high_iso, big.mark = ","), 
+           " (", district30_summary$pct_iso, "%)\n"))
+```
+
+
+*Soucres: NYC Gov; Science Direct; Columbia University Climate School; National Library of Medicine, Science Daily*
 
 ------------------------------------------------------------------------
 
