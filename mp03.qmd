@@ -8,6 +8,10 @@ format:
     html:
         code-fold: true
         code-summary: "Show code"
+        embed-resources: false     
+        self-contained: false      
+        fig-dpi: 72 
+        fig-format: jpeg
 execute:
   message: false
   warning: false
@@ -266,62 +270,6 @@ ggplot() +
   theme_minimal() +
   labs(title = "Sample of NYC Street Trees (50,000 of ~900,000)")
 ```
-
-#### *Interactive Tree Map*
-
-This interactive map further explores the spatial distribution of NYC's trees. The visualization uses marker clustering to handle the large dataset efficiently. At lower zoom levels, nearby trees are grouped into clusters, which break apart as you zoom in. Each tree is color-coded by condition (green = good, yellow = fair, orange = poor, red = dead). Users can also clicking on individual trees to see additional details about the species, condition, and location.
-
-```{r}
-#| label: prep-interactive-data
-#| code-summary: "Show Interactive Map Code"
-#| cache: true
-
-# Ensure we have the spatial join
-if (!exists("trees_with_districts")) {
-  trees_with_districts <- st_join(nyc_trees, nyc_districts, join = st_intersects)
-  trees_with_districts <- trees_with_districts |>
-    mutate(Borough = case_when(
-      CounDist >= 1 & CounDist <= 10 ~ "Manhattan",
-      CounDist >= 11 & CounDist <= 18 ~ "Bronx",
-      CounDist >= 19 & CounDist <= 32 ~ "Queens",
-      CounDist >= 33 & CounDist <= 47 ~ "Brooklyn",
-      CounDist >= 48 & CounDist <= 51 ~ "Staten Island",
-      TRUE ~ "Unknown"
-    ))
-}
-```
-```{r}
-#| label: interactive-leaflet-map
-#| fig.cap: "Interactive Map of NYC Street Trees"
-#| echo: false
-
-library(leaflet)
-
-leaflet(trees_with_districts) |>
-  addProviderTiles("CartoDB.Positron") |>
-  addCircleMarkers(
-    radius = 3,
-    color = ~case_when(
-      tpcondition == "Good" ~ "#2E7D32",
-      tpcondition == "Fair" ~ "#FBC02D",
-      tpcondition == "Poor" ~ "#F57C00",
-      tpcondition == "Dead" ~ "#C62828",
-      TRUE ~ "#757575"
-    ),
-    fillOpacity = 0.7,
-    stroke = FALSE,
-    popup = ~paste0("<b>", genusspecies, "</b><br>Condition: ", tpcondition),
-    clusterOptions = markerClusterOptions()
-  ) |>
-  addLegend(
-    position = "bottomright",
-    colors = c("#2E7D32", "#FBC02D", "#F57C00", "#C62828", "#757575"),
-    labels = c("Good", "Fair", "Poor", "Dead", "Unknown"),
-    title = "Tree Condition"
-  ) |>
-  setView(lng = -73.98, lat = 40.75, zoom = 11)
-```
-
 ---
 
 ### T4: District-Level Analysis of Tree Coverage
