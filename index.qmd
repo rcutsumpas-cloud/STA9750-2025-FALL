@@ -23,6 +23,7 @@ I am a creative problem solver who is passionate about strategy, marketing, and 
 - [Mini-Project 01: Netflix Top 10 Analysis](mp01.html)
 - [Mini-Project 02: Making Backyards Affordable for All](mp02.html)
 - [Mini-Project 03: Visualizing and Maintaining the Green Canopy of NYC](mp03.html)
+- [Mini-Project 04: Just the Fact(-Check)s, Ma’am!](mp04.html)
 
 ---
 
