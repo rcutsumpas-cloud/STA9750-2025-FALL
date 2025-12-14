@@ -1,0 +1,54 @@
+---
+title: "summary_group_demoRC"
+---
+
+# Demographic Influence: Understanding Reporting Factors
+
+City officials currently rely heavily on 311 complaint data to track the rats. This includes calls and reports filed by residents about rodent sightings. Regression analysis of NYC neighborhoods revealed a significant problem with this approach: where you live and neighbors demographic factors influence complaint rates almost as much as the actual presence of rats. Demographic characteristics alone explain 18.8% of the variation in 311 complaint rates across neighborhoods. This means that two areas with identical rat populations could see vastly different numbers of complaints due to differences in income, education, and civic engagement patterns.
+
+Findings from this analysis challenge common assumptions about reporting behavior. For example, income and education have opposite effects. Higher-income neighborhoods actually file fewer complaints. A likely reason for this is that wealthier residents have the time and disposable income to hire private exterminators or solve problems through building management rather than reporting to 311. 
+
+Neighborhoods with more college-educated residents file significantly more complaints. This finding suggests that higher education likely increases civic engagement and awareness of government systems, making them more comfortable contacting 311.
+
+CORRELATION ANALYSIS VISUALIZATION
+
+Interestingly, language barriers showed no significant effect, indicating that multilingual 311 services may be working or that language simply isn't the primary obstacle to reporting.
+
+This reporting bias raises concerns around equity and public health. If the Department of Health allocates pest control resources based purely on complaint volume, they will over-serve highly educated neighborhoods while under-serving both low-education areas (where residents may lack knowledge about how to report) and high-income areas (where residents solve problems privately). Communities facing genuine public health threats from rodent infestations may remain left out of official data because residents don't have a strong propensity complaint filing.
+
+```{r}
+#| tbl-cap: "How Neighborhood Demographics Affect 311 Complaint Rates"
+
+if (nrow(category_summary) > 0) {
+  
+  category_table <- category_summary %>%
+    transmute(
+      `Neighborhood Type` = case_when(
+        propensity_category == "Low Propensity" ~ "Low Civic Engagement",
+        propensity_category == "Medium Propensity" ~ "Medium Civic Engagement",
+        propensity_category == "High Propensity" ~ "High Civic Engagement"
+      ),
+      `Number of Neighborhoods` = n_ntas,
+      `Residents Affected` = scales::comma(total_population),
+      `Complaints Filed (per 1,000 people)` = round(avg_complaints_per_1000, 2),
+      `Typical Income` = scales::dollar(median_income_avg, accuracy = 1),
+      `College-Educated` = paste0(round(pct_bachelors_avg, 1), "%")
+    )
+  
+  kable(category_table, align = c("l", "c", "r", "r", "r", "r")) %>%
+    kable_styling(bootstrap_options = c("striped", "hover"), full_width = TRUE) %>%
+    column_spec(1, bold = TRUE, width = "12em", 
+                background = c("#E3F2FD", "#FFF9C4", "#FFEBEE")) %>%
+    add_header_above(c(" " = 1, "Scale" = 2, "Reporting Behavior" = 1, "Demographics" = 2)) %>%
+    footnote(general = c(
+      "High civic engagement neighborhoods file nearly 3x as many complaints as low engagement areas",
+      "This difference reflects reporting behavior, not actual rat populations"
+    ),
+    general_title = "Key Takeaway: ")
+  
+} else {
+  cat("Propensity categories require sufficient data\n")
+}
+```
+
+City agencies should not rely solely on 311 complaints for pest control decisions to address these areas of potential bias. Proactive inspections should be conducted in low-complaint neighborhoods and provide targeted outreach to educate residents about reporting systems. Before allocating resources, officials should statistically adjust complaint data using demographic factors and combine this information with objective measures to improve services. Understanding that 311 complaints measure both rat presence and community reporting behavior is essential for ensuring pest control resources reach the neighborhoods that need them most, not just the neighborhoods most likely to complain.

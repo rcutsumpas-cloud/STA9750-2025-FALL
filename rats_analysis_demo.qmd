@@ -29,6 +29,9 @@ editor: visual
 # Suppress warnings globally
 options(warn = -1)
 
+# Set working directory
+setwd("~/STA9750-2025-FALL")
+
 # Load packages
 library(httr2)
 library(jsonlite)
