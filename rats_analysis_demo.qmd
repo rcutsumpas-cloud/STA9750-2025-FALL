@@ -92,6 +92,9 @@ The regression analysis reveals a critical difference:
 - **For Research**: Reporting propensity scores can adjust for demographic bias in complaint-based urban pest studies
 - **For Equity**: Proactive monitoring and multilingual outreach are essential to ensure equitable pest control services across all NYC neighborhoods
 
+
+![](https://static.scientificamerican.com/dam/m/3d69b4a15659f8b7/original/rat_on_subway_platform.jpg?m=1757711008.193&w=900)
+
 ## Introduction
 
 311 complaint data is commonly used as a proxy for urban pest prevalence. However, this assumes equal reporting propensity across all neighborhoods. This study tests whether demographic characteristics create systematic reporting bias that could lead to misallocation of pest control resources.
@@ -428,6 +431,82 @@ kable(sample_summary, col.names = c("Metric", "Value"),
 The final analysis includes 166 NYC neighborhoods with complete demographic and complaint data, representing approximately 3.6 million residents. These neighborhoods generated 3,466 rodent-related 311 complaints, averaging just over one complaint per 1,000 residents. The sample exhibits substantial variation in both socioeconomic characteristics and complaint rates, making it well-suited for examining demographic drivers of reporting behavior.
 
 <br>
+
+---
+
+## Technical Methodology
+
+#### *Data Acquisition and Processing*
+
+**311 Complaint Data**: 10,000 rodent-related service requests were extracted from the NYC Open Data portal using the Socrata API (endpoint: `cvf2-zn8s.geojson`). Records included complaint timestamps, geographic coordinates (latitude/longitude), and complaint descriptors. Data were cached locally to minimize API calls during iterative analysis.
+
+**Spatial Boundaries**: Geographic aggregation used NYC Department of City Planning's 2020 Neighborhood Tabulation Area (NTA) boundaries, obtained as GeoJSON format. NTA 2020 boundaries represent 188 neighborhoods designed to aggregate census tracts while maintaining minimum populations of 15,000 for statistical reliability.
+
+**Demographic Data**: American Community Survey (ACS) 5-Year Estimates (2012-2016) provided neighborhood-level demographics from three files: demographic profiles (`demo_2016acs5yr_nta.csv`), economic characteristics (`econ_2016acs5yr_nta.csv`), and social characteristics (`soc_2016acs5yr_nta.csv`). Variables extracted included total population (`Pop_1E`), median household income (`MdHHIncE`), language spoken at home (`LgOEng1E`), foreign-born status (`Fb1E`), and educational attainment (`EA_BchDE`).
+
+#### *Geographic Matching Challenge and Resolution*
+
+A critical methodological challenge emerged from geographic incompatibility: demographic data used NTA 2010 geography (195 neighborhoods with codes like "BK27"), while spatial complaint data required NTA 2020 boundaries (188 neighborhoods with codes like "BK0101"). NYC Planning redrew NTA boundaries between 2010 and 2020, with approximately 60-70% experiencing minor boundary adjustments, 15-20% mergers, and 5-10% splits.
+
+**Solution**: A name-based crosswalk approach was used, matching neighborhoods by their text names (e.g., "Bay Ridge", "Chelsea") rather than codes. This matching successfully linked 167 of 193 NTA 2010 demographic records (86% match rate) to NTA 2020 spatial boundaries. The 26 unmatched neighborhoods (14%) were excluded from analysis, representing areas where names changed or boundaries were substantially redrawn.
+
+**Assumption**: This approach assumes matched neighborhoods represent comparable geographic areas despite boundary changes. While not perfect, name-matching provides a reasonable approximation for demographic-spatial alignment given data constraints.
+
+#### *Spatial Analysis*
+
+**Point-in-Polygon Join**: Complaint coordinates were converted to spatial point geometries using the `sf` package in R, projecting to WGS84 (EPSG:4326) coordinate reference system. Spatial join operations assigned each complaint to its containing NTA polygon using `st_join()`, creating a many-to-one relationship between complaints and neighborhoods.
+
+**Complaint Aggregation**: Complaints were summed by NTA, resulting in counts ranging from 0 to several hundred per neighborhood. Complaint rates were calculated as complaints per 1,000 residents to normalize for population differences: 
+$$\text{Rate}_{i} = \frac{\text{Complaints}_{i}}{\text{Population}_{i}} \times 1000$$
+
+**Population Density Calculation**: We computed neighborhood areas using `st_area()` from polygon geometries, converted square meters to square miles (1 sq mi = 2,589,988.11 sq m), and calculated density as:
+$$\text{Density}_{i} = \frac{\text{Population}_{i}}{\text{Area}_{i}}$$
+
+#### *Statistical Analysis*
+
+**Multiple Linear Regression**: A least-squares regression model was used to predict complaint rates from demographic predictors:
+
+$$\text{Complaints/1000}_{i} = \beta_0 + \beta_1(\text{EnglishOnly}_i) + \beta_2(\text{MedianIncome}_i) + \beta_3(\text{Bachelors}_i) + \beta_4(\text{PopDensity}_i) + \epsilon_i$$
+
+where:
+- English-Only = percentage of households speaking only English at home
+- MedianIncome = median household income (scaled per $1,000)
+- Bachelors = percentage with bachelor's degree or higher
+- PopDensity = population per square mile (scaled per 1,000)
+
+**Model Diagnostics**: Multicollinearity using Variance Inflation Factors (VIF) was examined, with all values < 5 indicating acceptable independence among predictors. Residual diagnostics (not shown) confirmed approximate normality and homoscedasticity, validating ordinary least squares assumptions.
+
+**Propensity Score Construction**: Using fitted regression coefficients, predicted complaint rates were calculated for each neighborhood based solely on demographics. These raw predictions were rescaled to 0-100 using min-max normalization:
+
+$$\text{PropensityScore}_{i} = \frac{\hat{y}_i - \min(\hat{y})}{\max(\hat{y}) - \min(\hat{y})} \times 100$$
+
+This score represents each neighborhood's expected reporting rate given its demographic profile, independent of actual rat populations.
+
+**Categorical Analysis**: Neighborhoods were stratified into tertiles based on propensity scores: Low (0-33), Medium (34-66), and High (67-100). We compared actual complaint rates across categories using descriptive statistics and visualizations to validate that demographic-based scores predict observed reporting behavior.
+
+#### *Software and Reproducibility*
+
+All analyses were conducted in R (version 4.5.1) using RStudio. Key packages included:
+- Spatial analysis: `sf` (1.0-16), `sp`
+- Data manipulation: `dplyr` (1.1.4), `tidyverse` (2.0.0)
+- Visualization: `ggplot2` (3.5.1), `corrplot` (0.95)
+- Regression diagnostics: `car` (3.1-3)
+- API access: `httr2` (1.0.5), `jsonlite` (1.8.9)
+
+Complete code, data processing scripts, and rendered analysis are available at: `https://github.com/rcutsumpas-cloud/STA9750-2025-FALL`
+
+#### *Limitations*
+
+1. **Geographic Approximation**: Name-based NTA matching assumes boundary changes between 2010 and 2020 were minor for matched neighborhoods, which may not hold for all areas
+2. **Sample Size**: Analysis limited to 10,000 complaints (of millions filed) due to computational constraints
+3. **Temporal Mismatch**: Demographics from 2012-2016 paired with 2020 spatial boundaries and complaint data from varying time periods
+4. **Omitted Variables**: Model excludes potentially relevant factors (building age, sanitation infrastructure, community organization) that may influence both rat presence and reporting
+5. **Ecological Fallacy**: Neighborhood-level associations may not reflect individual-level behavior
+6. **Selection Bias**: Excluded 14% of neighborhoods due to name-matching failures may systematically differ from included areas
+
+---
+
+![](https://static.scientificamerican.com/dam/m/399eac46c6e258db/original/graffiti_rat_with_megaphone.jpg?m=1757711722.944&w=600)
 
 ## Exploratory Analysis
 
